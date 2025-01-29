@@ -1,0 +1,27 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.display-4 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.table {
+    margin-top: 1rem;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}

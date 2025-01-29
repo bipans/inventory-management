@@ -1,213 +1,93 @@
-// Array to store inventory data
-let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-const itemsPerPage = 5; // Number of items per page
-let currentPage = 1;
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('search').addEventListener('input', function(event) {
+        const query = event.target.value.toLowerCase();
+        const report = document.getElementById('report');
+        report.innerHTML = ''; // Clear previous results
 
-// Get form and table elements
-const form = document.getElementById('inventoryForm');
-const purchaseForm = document.getElementById('purchaseForm');
-const salesForm = document.getElementById('salesForm');
-const tableBody = document.querySelector('#inventoryTable tbody');
-const searchInput = document.getElementById('searchInput');
-const pagination = document.getElementById('pagination');
-const purchaseItemSelect = document.getElementById('purchaseItem');
-const salesItemSelect = document.getElementById('salesItem');
+        // Assuming you have an array of inventory items
+        const inventoryItems = [
+            // Example items
+            { productName: 'Product 1', status: 'Delivered', doa: '2023-10-01' },
+            { productName: 'Product 2', status: 'In-Transit', doa: '2023-10-05' },
+            // ...other items
+        ];
 
-// Function to save inventory to localStorage
-function saveInventory() {
-  localStorage.setItem('inventory', JSON.stringify(inventory));
-}
+        const filteredItems = inventoryItems.filter(item => 
+            item.productName.toLowerCase().includes(query) ||
+            item.status.toLowerCase().includes(query) ||
+            item.doa.includes(query)
+        );
 
-// Function to populate item select dropdowns
-function populateItemSelects() {
-  purchaseItemSelect.innerHTML = '';
-  salesItemSelect.innerHTML = '';
-  inventory.forEach(item => {
-    const option = document.createElement('option');
-    option.value = item.id;
-    option.textContent = item.name;
-    purchaseItemSelect.appendChild(option.cloneNode(true));
-    salesItemSelect.appendChild(option);
-  });
-}
+        filteredItems.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'card mb-2';
+            itemElement.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${item.productName}</h5>
+                    <p class="card-text">Status: ${item.status}</p>
+                    <p class="card-text">Date of Arrival: ${item.doa}</p>
+                </div>
+            `;
+            report.appendChild(itemElement);
+        });
+    });
 
-// Function to validate form inputs
-function validateForm(itemName, itemQuantity, itemPrice) {
-  if (!itemName || itemName.trim() === '') {
-    alert('Item Name is required.');
-    return false;
-  }
-  if (isNaN(itemQuantity) || itemQuantity <= 0) {
-    alert('Quantity must be a positive number.');
-    return false;
-  }
-  if (isNaN(itemPrice) || itemPrice <= 0) {
-    alert('Price must be a positive number.');
-    return false;
-  }
-  return true;
-}
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const report = document.getElementById('report');
+        report.innerHTML = ''; // Clear previous results
 
-// Function to add item to inventory
-function addItem(event) {
-  event.preventDefault();
+        // Assuming you have an array of inventory items
+        const inventoryItems = [
+            // Example items
+            { productName: 'Product 1', status: 'Delivered', doa: '2023-10-01' },
+            { productName: 'Product 2', status: 'In-Transit', doa: '2023-10-05' },
+            // ...other items
+        ];
 
-  // Get form values
-  const itemName = document.getElementById('itemName').value;
-  const itemQuantity = parseInt(document.getElementById('itemQuantity').value);
-  const itemPrice = parseFloat(document.getElementById('itemPrice').value);
+        const filteredItems = inventoryItems.filter(item => 
+            item.productName.toLowerCase().includes(query) ||
+            item.status.toLowerCase().includes(query) ||
+            item.doa.includes(query)
+        );
 
-  // Validate form inputs
-  if (!validateForm(itemName, itemQuantity, itemPrice)) {
-    return;
-  }
+        filteredItems.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'card mb-2';
+            itemElement.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${item.productName}</h5>
+                    <p class="card-text">Status: ${item.status}</p>
+                    <p class="card-text">Date of Arrival: ${item.doa}</p>
+                </div>
+            `;
+            report.appendChild(itemElement);
+        });
+    });
 
-  // Create new item object
-  const newItem = {
-    id: Date.now(), // Unique ID for each item
-    name: itemName,
-    quantity: itemQuantity,
-    price: itemPrice,
-    purchases: [],
-    sales: []
-  };
+    document.getElementById('generateReportButton').addEventListener('click', function() {
+        const report = document.getElementById('report');
+        report.innerHTML = ''; // Clear previous results
 
-  // Add item to inventory array
-  inventory.push(newItem);
+        // Assuming you have an array of inventory items
+        const inventoryItems = [
+            // Example items
+            { productName: 'Product 1', status: 'Delivered', doa: '2023-10-01' },
+            { productName: 'Product 2', status: 'In-Transit', doa: '2023-10-05' },
+            // ...other items
+        ];
 
-  // Save to localStorage
-  saveInventory();
-
-  // Clear form
-  form.reset();
-
-  // Refresh table and dropdowns
-  renderTable();
-  populateItemSelects();
-  renderPagination();
-}
-
-// Function to record purchase
-function recordPurchase(event) {
-  event.preventDefault();
-
-  const itemId = parseInt(purchaseItemSelect.value);
-  const quantity = parseInt(document.getElementById('purchaseQuantity').value);
-  const date = document.getElementById('purchaseDate').value;
-
-  const item = inventory.find(item => item.id === itemId);
-  if (item) {
-    item.purchases.push({ quantity, date });
-    item.quantity += quantity;
-    saveInventory();
-    renderTable();
-    purchaseForm.reset();
-  }
-}
-
-// Function to record sale
-function recordSale(event) {
-  event.preventDefault();
-
-  const itemId = parseInt(salesItemSelect.value);
-  const quantity = parseInt(document.getElementById('salesQuantity').value);
-  const date = document.getElementById('salesDate').value;
-
-  const item = inventory.find(item => item.id === itemId);
-  if (item) {
-    if (item.quantity < quantity) {
-      alert('Insufficient stock!');
-      return;
-    }
-    item.sales.push({ quantity, date });
-    item.quantity -= quantity;
-    saveInventory();
-    renderTable();
-    salesForm.reset();
-  }
-}
-
-// Function to render table
-function renderTable(data = inventory, page = currentPage) {
-  tableBody.innerHTML = ''; // Clear table
-
-  const start = (page - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  const paginatedData = data.slice(start, end);
-
-  paginatedData.forEach(item => {
-    const row = document.createElement('tr');
-
-    row.innerHTML = `
-      <td>${item.name}</td>
-      <td>${item.quantity}</td>
-      <td>$${item.price.toFixed(2)}</td>
-      <td class="actions">
-        <button class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
-      </td>
-    `;
-
-    tableBody.appendChild(row);
-  });
-}
-
-// Function to delete item
-function deleteItem(id) {
-  inventory = inventory.filter(item => item.id !== id);
-  saveInventory();
-  renderTable();
-  populateItemSelects();
-  renderPagination();
-}
-
-// Function to edit item
-function editItem(id) {
-  const item = inventory.find(item => item.id === id);
-
-  // Fill form with item data
-  document.getElementById('itemName').value = item.name;
-  document.getElementById('itemQuantity').value = item.quantity;
-  document.getElementById('itemPrice').value = item.price;
-
-  // Remove item from inventory
-  deleteItem(id);
-}
-
-// Function to search items
-function searchItems() {
-  const searchTerm = searchInput.value.toLowerCase();
-  const filteredItems = inventory.filter(item =>
-    item.name.toLowerCase().includes(searchTerm)
-  );
-  renderTable(filteredItems);
-  renderPagination(filteredItems);
-}
-
-// Function to generate stock report
-function generateStockReport() {
-  const headers = ['Item Name', 'Available Stock', 'Price'];
-  const rows = inventory.map(item => [item.name, item.quantity, `$${item.price.toFixed(2)}`]);
-
-  let csvContent = "data:text/csv;charset=utf-8,";
-  csvContent += headers.join(',') + '\n';
-  rows.forEach(row => csvContent += row.join(',') + '\n');
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', 'stock_report.csv');
-  document.body.appendChild(link);
-  link.click();
-}
-
-// Event Listeners
-form.addEventListener('submit', addItem);
-purchaseForm.addEventListener('submit', recordPurchase);
-salesForm.addEventListener('submit', recordSale);
-searchInput.addEventListener('input', searchItems);
-
-// Initial render
-populateItemSelects();
-renderTable();
-renderPagination();
+        inventoryItems.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'card mb-2';
+            itemElement.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${item.productName}</h5>
+                    <p class="card-text">Status: ${item.status}</p>
+                    <p class="card-text">Date of Arrival: ${item.doa}</p>
+                </div>
+            `;
+            report.appendChild(itemElement);
+        });
+    });
+});

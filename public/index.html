@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #report div {
+            cursor: pointer;
+            padding: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 5px;
+        }
+        #report div:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="display-4">Inventory Management</h1>
+        <form id="data-entry-form" class="needs-validation" enctype="multipart/form-data" novalidate>
+            <div class="form-group">
+                <label for="productName">Particulars (Product Name):</label>
+                <input type="text" class="form-control" id="productName" name="productName" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price (Price per piece):</label>
+                <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="piecesPerBox">Pieces/Box (Number of pieces in one box):</label>
+                <input type="number" class="form-control" id="piecesPerBox" name="piecesPerBox" required>
+            </div>
+            <div class="form-group">
+                <label for="box">Box (Total no of boxes):</label>
+                <input type="number" class="form-control" id="box" name="box" required>
+            </div>
+            <div class="form-group">
+                <label for="total">Total (Pieces/Box multiplied with Box):</label>
+                <input type="number" class="form-control" id="total" name="total" readonly>
+            </div>
+            <div class="form-group">
+                <label for="doa">DOA (Date of arrival):</label>
+                <input type="date" class="form-control" id="doa" name="doa" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="In-Transit">In-Transit</option>
+                    <option value="Delivered">Delivered</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="shippingMark">Shipping Mark:</label>
+                <select class="form-control" id="shippingMark" name="shippingMark" required>
+                    <option value="BRB">BRB</option>
+                    <option value="GB">GB</option>
+                    <option value="BBT">BBT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="warehouseSlip">Warehouse Slip (Image file):</label>
+                <input type="file" class="form-control-file" id="warehouseSlip" name="warehouseSlip" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="cbm">CBM (Cubic meter):</label>
+                <input type="number" class="form-control" id="cbm" name="cbm" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <h2 class="mt-5">Search</h2>
+        <input type="text" class="form-control mb-3" id="search" placeholder="Search...">
+        <button id="searchButton" class="btn btn-primary btn-sm mb-3">Search</button>
+
+        <h2 class="mt-5">Report</h2>
+        <div id="report"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('data-entry-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (this.checkValidity() === false) {
+                event.stopPropagation();
+            } else {
+                // Add your form submission logic here
+                alert('Form submitted!');
+            }
+            this.classList.add('was-validated');
+        });
+    </script>
+    <!-- Deployment Instructions: 
+         1. Set up a web server (e.g., GitHub Pages, Netlify, Vercel).
+         2. Upload your index.html, styles.css, and script.js files.
+         3. Configure the server to serve index.html as the main entry point.
+         4. Access your site via the provided URL.
+    -->
+</body>
+</html>
